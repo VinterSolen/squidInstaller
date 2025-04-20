@@ -398,18 +398,24 @@ updateInstallListString() {
 }
 
 checkDNForAPT() {
-  if ! [ -x "$(command -v apt-get)" ]; then
-    bAptExists=false
-  else
+  if available apt-get; then
     bAptExists=true
+  else
+    bAptExists=false
   fi
 
-  if ! [ -x "$(command -v dnf)" ]; then
-    bDnfExists=false
-  else
+#  if ! [ -x "$(command -v dnf)" ]; then
+  if available dnf; then
     bDnfExists=true
+  else
+    bDnfExists=falseq
+
   fi
 }
+
+# Helpers
+available() { command -v "${1:?}" >/dev/null; }
+
 
 # Check if DNF or APT exists on the system
 checkDNForAPT
