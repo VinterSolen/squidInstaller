@@ -6,7 +6,7 @@ bAptUpgrade=false
 bFlatPak=false
 bAutoYesPrompts=false
 bDownloadFilesOnly=false
-
+selectedListsToInstall="Desktop, Server, Flatpak Desktop, Flatpak Server"
 
 
 # Default package lists
@@ -15,28 +15,42 @@ defaultServer="https://raw.githubusercontent.com/VinterSolen/squidInstaller/refs
 defaultFlatpakDesktop="https://raw.githubusercontent.com/VinterSolen/squidInstaller/refs/heads/main/packagefiles/install-flatpak-desktop.txt"
 defaultFlatpakServer="https://raw.githubusercontent.com/VinterSolen/squidInstaller/refs/heads/main/packagefiles/install-flatpak-server.txt"
 
+#Enable/Disable lists for install
+bDefaultDesktop=true
+bDefaultServer=true
+bDefaultFlatpakDesktop=true
+bDefaultFlatpakServer=true
+
+
+
 
 # Main menu of the installer
 # Enables user to make changes before running installer
 mainMenu() {
+
+
 
 aptUpdate="APT Update: $(yesNoValue "$bAptUpdate") "
 aptUpgrade="APT Upgrade: $(yesNoValue "$bAptUpgrade")  "
 flatPak="FlatPak: $(yesNoValue "$bFlatPak")"
 #Set output to empty before re-building it
 OUTPUT=""
+
+
 clear
+updateInstallListString
 
 echo -e "################################################################################"
 # Put in values of update/upgrades to reflect toggleable values
 OUTPUT="${OUTPUT}(1) $aptUpdate \t (2) $aptUpgrade \n"
-OUTPUT="${OUTPUT}(3) $flatPak \t (4) Default lists \n"
+OUTPUT="${OUTPUT}(3) $flatPak \t (4) Show lists \n"
 
 
 
 # Last Rows
 OUTPUT="${OUTPUT}(r) Run installer \t (a) Automatic yes to prompts: $(yesNoValue "$bAutoYesPrompts")\n"
 OUTPUT="${OUTPUT}\t (d) Download files only: $(yesNoValue "$bDownloadFilesOnly")\n"
+OUTPUT="${OUTPUT}(e) Lists to install\t $selectedListsToInstall \n"
 OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
 
 
@@ -87,6 +101,10 @@ case $readValue in
   mainMenu
   ;;
 
+  "e") # Change what lists to be installed
+  changeInstallLists
+  ;;
+
 
   *) # If no other value matches
     mainMenu
@@ -96,6 +114,82 @@ esac
 
 }
 
+
+changeInstallLists() {
+OUTPUT=""
+clear
+
+echo -e "################################################################################"
+
+
+
+OUTPUT="${OUTPUT}(1) Server list \t $(yesNoValue "$bDefaultServer") \n"
+OUTPUT="${OUTPUT}(2) Desktop list \t $(yesNoValue "$bDefaultDesktop") \n"
+OUTPUT="${OUTPUT}(3) Flatpak list (Server) \t $(yesNoValue "$bDefaultFlatpakServer") \n"
+OUTPUT="${OUTPUT}(4) Flatpak list (Desktop) \t $(yesNoValue "$bDefaultFlatpakDesktop") \n"
+OUTPUT="${OUTPUT}(d) Display lists content \t  \n"
+
+
+# Last Rows
+OUTPUT="${OUTPUT}(m) Main menu \t\n"
+OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
+
+
+# Print the menu and format the columns a bit nicer to view
+echo -e $OUTPUT | column -ts $'\t' -o "  "
+echo -e "################################################################################"
+
+# Read input for options, p to reprint the menu as default value
+read   -p "Enter value [p]: " readValue
+readValue=${readValue:-p}
+
+
+# When user has entered something, do something here
+case $readValue in
+  "q")
+    exit 0
+    ;;
+
+  "p")
+    changeInstallLists
+    ;;
+
+  "1")
+  bDefaultServer=$([ "$bDefaultServer" = true ] && echo false || echo true)
+  changeInstallLists
+  ;;
+
+  "2")
+  bDefaultDesktop=$([ "$bDefaultDesktop" = true ] && echo false || echo true)
+  changeInstallLists
+  ;;
+
+  "3")
+  bDefaultFlatpakServer=$([ "$bDefaultFlatpakServer" = true ] && echo false || echo true)
+  changeInstallLists
+  ;;
+
+  "4")
+  bDefaultFlatpakDesktop=$([ "$bDefaultFlatpakDesktop" = true ] && echo false || echo true)
+  changeInstallLists
+  ;;
+
+
+  "d")
+  displayListContent
+  changeInstallLists
+  ;;
+
+  "m")
+  updateInstallListString
+  mainMenu
+  ;;
+
+  *) # If no other value matches
+    changeInstallLists
+    ;;
+esac
+}
 
 # Function to displays and enables changing the default lists
 
@@ -157,6 +251,7 @@ case $readValue in
 
   "d")
   displayListContent
+  defaultListMenu
   ;;
 
   "m")
@@ -200,7 +295,7 @@ echo "#############################"
 pause_for_user
 
 
-defaultListMenu
+
 
 }
 
@@ -234,6 +329,59 @@ yesNoValue() {
         echo "invalid input"
     fi
 }
+
+
+updateInstallListString() {
+
+  selectedListsToInstall=""
+  local bFirst=true
+
+
+    # Server
+    if [ "$bDefaultServer" = "true" ]; then
+      if [ "$bFirst" = "true" ]; then
+        selectedListsToInstall="Server"
+        bFirst=false
+     else
+        selectedListsToInstall="$selectedListsToInstall, Server"
+      fi
+    fi
+
+  # Desktop
+    if [ "$bDefaultDesktop" = "true" ]; then
+      if [ "$bFirst" = "true" ]; then
+        selectedListsToInstall="Desktop"
+        bFirst=false
+     else
+        selectedListsToInstall="$selectedListsToInstall, Desktop"
+      fi
+    fi
+
+  # Server, Flatpak
+    if [ "$bDefaultFlatpakServer" = "true" ]; then
+      if [ "$bFirst" = "true" ]; then
+        selectedListsToInstall="Server Flatpak"
+        bFirst=false
+     else
+        selectedListsToInstall="$selectedListsToInstall, Server Flatpak"
+      fi
+    fi
+
+  # Desktop, Flatpak
+    if [ "$bDefaultFlatpakDesktop" = "true" ]; then
+      if [ "$bFirst" = "true" ]; then
+        selectedListsToInstall="Desktop Flatpak"
+        bFirst=false
+     else
+        selectedListsToInstall="$selectedListsToInstall, Desktop Flatpak"
+      fi
+    fi
+
+
+  #selectedListsToInstall="Desktop, Server, Flatpak Desktop, Flatpak Server"
+
+}
+
 
 # Calls the mainMenu function to start off the script
 mainMenu
