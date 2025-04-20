@@ -1,37 +1,41 @@
 #!/bin/bash
 
+# Default APT Values
 bAptUpdate=true
 bAptUpgrade=false
 
-#OUTPUT="$(ls -al   )"
-#ls -al   | column -t -o "    "
-mainMenu() {
 
+# Main menu of the installer
+# Enables user to make changes before running installer
+mainMenu() {
 
 aptUpdate="APT Update: $bAptUpdate "
 aptUpgrade="APT Upgrade: $bAptUpgrade "
 
-
+#Set output to empty before re-building it
 OUTPUT=""
 clear
+
 echo -e "################################################################################"
+# Put in values of update/upgrades to reflect toggleable values
 OUTPUT="${OUTPUT} (1) $aptUpdate \t (2) $aptUpgrade \n"
 
 
 
-#Last Row
+# Last Rows
 OUTPUT="${OUTPUT}(r) Run installer \t\n"
-
 OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
 
 
-#echo -e $aptUpdate
+# Print the menu and format the columns a bit nicer to view
 echo -e $OUTPUT | column -ts $'\t' -o "  "
 echo -e "################################################################################"
 
+# Read input for options, p to reprint the menu as default value
 read   -p "Enter value [p]: " readValue
 readValue=${readValue:-p}
 
+# When user has entered something, do something here
 case $readValue in
   "q")
     exit 0
@@ -48,7 +52,7 @@ case $readValue in
   mainMenu
   ;;
 
-  *)
+  *) # If no other value matches
     mainMenu
     ;;
 esac
@@ -56,4 +60,5 @@ esac
 
 }
 
+# Calls the mainMenu function to start off the script
 mainMenu
