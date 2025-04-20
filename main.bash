@@ -1,5 +1,5 @@
 #!/bin/bash -i
-# bashsupport disable=BP2001
+## bashsupport disable=BP2001
 
 # Colours
 
@@ -12,9 +12,11 @@
 #Cyan         0;36     Light Cyan    1;36
 #Light Gray   0;37     White         1;37
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-NC='\033[0m' # No Color
+RED='\033[0;31m' # ${RED}
+GREEN='\033[0;32m' # ${GREEN}
+YELLOW='\033[0;33m' # ${YELLOW}
+BLUE='\033[0;34m' # ${BLUE}
+NC='\033[0m' # No Color ${NC}
 #echo -e "${RED}red text ${NC} normal color"
 
 # Default APT Values
@@ -313,17 +315,17 @@ displayListContent() {
   contentDefaultFlatpakServer=$(wget $defaultFlatpakServer -q -O -)
 
   echo -e "#############################\n"
-  echo "Candidates for Server:"
-  echo "$contentDefaultServer"
-  echo -e "#############################\n"
-  echo "Candidates for Desktop:"
-  echo "$contentDefaultDesktop"
-  echo -e "#############################\n"
-  echo "Candidates for Flatpak Server:"
-  echo "$contentDefaultFlatpakServer"
-  echo -e "#############################\n"
-  echo "Candidates for Flatpak Desktop:"
-  echo -e "$contentDefaultFlatpakDesktop"
+  echo -e "${BLUE}Candidates for Server:${NC}"
+  echo -e "${YELLOW}$contentDefaultServer${NC}\n"
+  #echo -e "#############################\n"
+  echo -e "${BLUE}Candidates for Desktop:${NC}"
+  echo -e "${YELLOW}$contentDefaultDesktop${NC}\n"
+  #echo -e "#############################\n"
+  echo -e "${BLUE}Candidates for Flatpak Server:${NC}"
+  echo -e "${YELLOW}$contentDefaultFlatpakServer${NC}\n"
+  #echo -e "#############################\n"
+  echo -e "${BLUE}Candidates for Flatpak Desktop:${NC}"
+  echo -e "${YELLOW}$contentDefaultFlatpakDesktop${NC}\n"
   echo "#############################"
 
   # Script continues after the user presses Enter
