@@ -1,0 +1,5 @@
+eu.betterbird.Betterbird
+com.discordapp.Discord
+chat.revolt.RevoltDesktop
+com.viber.Viber
+com.rtosta.zapzap
