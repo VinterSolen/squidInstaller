@@ -49,7 +49,7 @@ echo -e "#######################################################################
 
 # Root check
 if [ "$USER" != "root" ]; then
-    echo -e "${RED}This script needs to be run as root to install packages${NC}"
+    echo -e "${RED}This script might need to be run as root to install packages${NC}"
 fi
 
 # Put in values of update/upgrades to reflect toggleable values
