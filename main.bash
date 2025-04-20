@@ -42,8 +42,8 @@ mainMenu() {
 
 aptUpdate="APT Update: $(yesNoValue "$bAptUpdate") "
 aptUpgrade="APT Upgrade: $(yesNoValue "$bAptUpgrade")  "
-dnfUpdate="DNF Update: $(yesNoValue "$bAptUpdate") "
-dnfUpgrade="DNF Upgrade: $(yesNoValue "$bAptUpgrade")  "
+dnfUpdate="DNF Update: $(yesNoValue "$bDnfUpdate") "
+dnfUpgrade="DNF Upgrade: $(yesNoValue "$bDnfUpgrade")  "
 
 
 flatPak="FlatPak: $(yesNoValue "$bFlatPak")"
@@ -99,12 +99,25 @@ case $readValue in
     ;;
 
   "1")
-  bAptUpdate=$([ "$bAptUpdate" = true ] && echo false || echo true)
+    if [ "$bAptExists" = "true" ]; then
+      # APT
+      bAptUpdate=$([ "$bAptUpdate" = true ] && echo false || echo true)
+    elif [ "$bDnfExists" = "true" ]; then
+      # DNF
+      bDnfUpdate=$([ "$bDnfUpdate" = true ] && echo false || echo true)
+    fi
   mainMenu
   ;;
 
   "2")
-  bAptUpgrade=$([ "$bAptUpgrade" = true ] && echo false || echo true)
+ # bAptUpgrade=$([ "$bAptUpgrade" = true ] && echo false || echo true)
+     if [ "$bAptExists" = "true" ]; then
+      # APT
+      bAptUpgrade=$([ "$bAptUpgrade" = true ] && echo false || echo true)
+    elif [ "$bDnfExists" = "true" ]; then
+      # DNF
+      bDnfUpgrade=$([ "$bDnfUpgrade" = true ] && echo false || echo true)
+    fi
   mainMenu
   ;;
 
