@@ -1,7 +1,18 @@
-#!/bin/bash  -i
+#!/bin/bash -i
 
 # Colours
+
+#Black        0;30     Dark Gray     1;30
+#Red          0;31     Light Red     1;31
+#Green        0;32     Light Green   1;32
+#Brown/Orange 0;33     Yellow        1;33
+#Blue         0;34     Light Blue    1;34
+#Purple       0;35     Light Purple  1;35
+#Cyan         0;36     Light Cyan    1;36
+#Light Gray   0;37     White         1;37
+
 RED='\033[0;31m'
+GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 #echo -e "${RED}red text ${NC} normal color"
 
@@ -25,10 +36,10 @@ defaultFlatpakDesktop="https://raw.githubusercontent.com/VinterSolen/squidInstal
 defaultFlatpakServer="https://raw.githubusercontent.com/VinterSolen/squidInstaller/refs/heads/main/packagefiles/install-flatpak-server.txt"
 
 #Enable/Disable lists for install
-bDefaultDesktop=true
-bDefaultServer=true
-bDefaultFlatpakDesktop=true
-bDefaultFlatpakServer=true
+bDefaultDesktop=false
+bDefaultServer=false
+bDefaultFlatpakDesktop=false
+bDefaultFlatpakServer=false
 
 # Main menu of the installer
 # Enables user to make changes before running installer
@@ -344,45 +355,45 @@ updateInstallListString() {
   # Server
   if [ "$bDefaultServer" = "true" ]; then
     if [ "$bFirst" = "true" ]; then
-      selectedListsToInstall="Server"
+      selectedListsToInstall="${GREEN}Server${NC}"
       bFirst=false
     else
-      selectedListsToInstall="$selectedListsToInstall, Server"
+      selectedListsToInstall="$selectedListsToInstall, ${GREEN}Server${NC}"
     fi
   fi
 
   # Desktop
   if [ "$bDefaultDesktop" = "true" ]; then
     if [ "$bFirst" = "true" ]; then
-      selectedListsToInstall="Desktop"
+      selectedListsToInstall="${GREEN}Desktop${NC}"
       bFirst=false
     else
-      selectedListsToInstall="$selectedListsToInstall, Desktop"
+      selectedListsToInstall="$selectedListsToInstall, ${GREEN}Desktop${NC}"
     fi
   fi
 
   # Server, Flatpak
   if [ "$bDefaultFlatpakServer" = "true" ] && [ "$bFlatPak" = "true" ]; then
     if [ "$bFirst" = "true" ]; then
-      selectedListsToInstall="Server Flatpak"
+      selectedListsToInstall="${GREEN}Server Flatpak${NC}"
       bFirst=false
     else
-      selectedListsToInstall="$selectedListsToInstall, Server Flatpak"
+      selectedListsToInstall="$selectedListsToInstall, ${GREEN}Server Flatpak${NC}"
     fi
   fi
 
   # Desktop, Flatpak
   if [ "$bDefaultFlatpakDesktop" = "true" ] && [ "$bFlatPak" = "true" ]; then
     if [ "$bFirst" = "true" ]; then
-      selectedListsToInstall="Desktop Flatpak"
+      selectedListsToInstall="${GREEN}Desktop Flatpak${NC}"
       bFirst=false
     else
-      selectedListsToInstall="$selectedListsToInstall, Desktop Flatpak"
+      selectedListsToInstall="$selectedListsToInstall, ${GREEN}Desktop Flatpak${NC}"
     fi
   fi
 
   if [ "$selectedListsToInstall" = "" ]; then
-    selectedListsToInstall="(none)"
+    selectedListsToInstall="${RED}(none)${NC}"
   fi
 }
 
