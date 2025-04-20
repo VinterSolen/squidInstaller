@@ -408,7 +408,7 @@ checkDNForAPT() {
   if available dnf; then
     bDnfExists=true
   else
-    bDnfExists=falseq
+    bDnfExists=false
 
   fi
 }
