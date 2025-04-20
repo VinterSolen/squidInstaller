@@ -36,7 +36,7 @@ defaultServer="https://raw.githubusercontent.com/VinterSolen/squidInstaller/refs
 defaultFlatpakDesktop="https://raw.githubusercontent.com/VinterSolen/squidInstaller/refs/heads/main/packagefiles/install-flatpak-desktop.txt"
 defaultFlatpakServer="https://raw.githubusercontent.com/VinterSolen/squidInstaller/refs/heads/main/packagefiles/install-flatpak-server.txt"
 
-#Enable/Disable lists for install
+#Enable/Disable lists for installation
 bDefaultDesktop=false
 bDefaultServer=false
 bDefaultFlatpakDesktop=false
@@ -45,7 +45,7 @@ bDefaultFlatpakServer=false
 specialInstall="(none)"
 bSpecialBrave=false
 
-# Main menu of the installer
+# The main menu of the installer
 # Enables user to make changes before running installer
 mainMenu() {
 
@@ -86,14 +86,14 @@ mainMenu() {
   OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
 
   # Print the menu and format the columns a bit nicer to view
-  echo -e $OUTPUT | column -ts $'\t' -o "  "
+  echo -e "$OUTPUT" | column -ts $'\t' -o "  "
   echo -e "################################################################################"
 
-  # Read input for options, p to reprint the menu as default value
-  read -p "Enter value [p]: " readValue
+  # Read input for options, p to reprint the menu as the default value
+  read -rp "Enter value [p]: " readValue
   readValue=${readValue:-p}
 
-  # When user has entered something, do something here
+  # When a user has entered something, do something here
   case $readValue in
   "q") # Exit script
     exit 0
@@ -126,7 +126,7 @@ mainMenu() {
     mainMenu
     ;;
 
-  "3") # Toggle to install flatpak, and enable flatpak lists
+  "3") # Toggle to install flatpak and enable flatpak lists
     bFlatPak=$([ "$bFlatPak" = true ] && echo false || echo true)
     mainMenu
     ;;
@@ -176,11 +176,11 @@ changeInstallLists() {
   OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
 
   # Print the menu and format the columns a bit nicer to view
-  echo -e $OUTPUT | column -ts $'\t' -o "  "
+  echo -e "$OUTPUT" | column -ts $'\t' -o "  "
   echo -e "################################################################################"
 
-  # Read input for options, p to reprint the menu as default value
-  read -p "Enter value [p]: " readValue
+  # Read input for options, p to reprint the menu as the default value
+  read -rp "Enter value [p]: " readValue
   readValue=${readValue:-p}
 
   # When the user has entered something, do something here
@@ -248,14 +248,14 @@ defaultListMenu() {
   OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
 
   # Print the menu and format the columns a bit nicer to view
-  echo -e $OUTPUT | column -ts $'\t' -o "  "
+  echo -e "$OUTPUT" | column -ts $'\t' -o "  "
   echo -e "################################################################################"
 
-  # Read input for options, p to reprint the menu as default value
-  read -p "Enter value [p]: " readValue
+  # Read input for options, p to reprint the menu as the default value
+  read -rp "Enter value [p]: " readValue
   readValue=${readValue:-p}
 
-  # When user has entered something, do something here
+  # When a user has entered something, do something here
   case $readValue in
   "q")
     exit 0
@@ -304,23 +304,23 @@ displayListContent() {
   echo "Fetching lists.."
 
   #$defaultServer
-  contentdefaultServer=$(wget $defaultServer -q -O -)
-  contentdefaultDesktop=$(wget $defaultDesktop -q -O -)
-  contentdefaultFlatpakDesktop=$(wget $defaultFlatpakDesktop -q -O -)
-  contentdefaultFlatpakServer=$(wget $defaultFlatpakServer -q -O -)
+  contentDefaultServer=$(wget $defaultServer -q -O -)
+  contentDefaultDesktop=$(wget $defaultDesktop -q -O -)
+  contentDefaultFlatpakDesktop=$(wget $defaultFlatpakDesktop -q -O -)
+  contentDefaultFlatpakServer=$(wget $defaultFlatpakServer -q -O -)
 
   echo -e "#############################\n"
   echo "Candidates for Server:"
-  echo $contentdefaultServer
+  echo "$contentDefaultServer"
   echo -e "#############################\n"
   echo "Candidates for Desktop:"
-  echo $contentdefaultDesktop
+  echo "$contentDefaultDesktop"
   echo -e "#############################\n"
   echo "Candidates for Flatpak Server:"
-  echo $contentdefaultFlatpakServer
+  echo "$contentDefaultFlatpakServer"
   echo -e "#############################\n"
   echo "Candidates for Flatpak Desktop:"
-  echo -e $contentdefaultFlatpakDesktop
+  echo -e "$contentDefaultFlatpakDesktop"
   echo "#############################"
 
   # Script continues after the user presses Enter
@@ -341,7 +341,6 @@ yesNoValue() {
 
   # Convert a string to lowercase
   to_lowercase() {
-    local input="$1"
     echo "$input" | tr '[:upper:]' '[:lower:]'
   }
 
@@ -436,14 +435,14 @@ specialInstallMenu() {
   OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
 
   # Print the menu and format the columns a bit nicer to view
-  echo -e $OUTPUT | column -ts $'\t' -o "  "
+  echo -e "$OUTPUT" | column -ts $'\t' -o "  "
   echo -e "################################################################################"
 
-  # Read input for options, p to reprint the menu as default value
-  read -p "Enter value [p]: " readValue
+  # Read input for options, p to reprint the menu as the default value
+  read -rp "Enter value [p]: " readValue
   readValue=${readValue:-p}
 
-  # When user has entered something, do something here
+  # When a user has entered something, do something here
   case $readValue in
   "q")
     exit 0
