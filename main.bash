@@ -18,9 +18,6 @@ selectedListsToInstall="Desktop, Server, Flatpak Desktop, Flatpak Server"
 bAptExists=false
 bDnfExists=false
 
-
-
-
 # Default package lists
 defaultDesktop="https://raw.githubusercontent.com/VinterSolen/squidInstaller/refs/heads/main/packagefiles/install-desktop.txt"
 defaultServer="https://raw.githubusercontent.com/VinterSolen/squidInstaller/refs/heads/main/packagefiles/install-server.txt"
@@ -33,72 +30,64 @@ bDefaultServer=true
 bDefaultFlatpakDesktop=true
 bDefaultFlatpakServer=true
 
-
-
-
 # Main menu of the installer
 # Enables user to make changes before running installer
 mainMenu() {
 
-aptUpdate="APT Update: $(yesNoValue "$bAptUpdate") "
-aptUpgrade="APT Upgrade: $(yesNoValue "$bAptUpgrade")  "
-dnfUpdate="DNF Update: $(yesNoValue "$bDnfUpdate") "
-dnfUpgrade="DNF Upgrade: $(yesNoValue "$bDnfUpgrade")  "
+  aptUpdate="APT Update: $(yesNoValue "$bAptUpdate") "
+  aptUpgrade="APT Upgrade: $(yesNoValue "$bAptUpgrade")  "
+  dnfUpdate="DNF Update: $(yesNoValue "$bDnfUpdate") "
+  dnfUpgrade="DNF Upgrade: $(yesNoValue "$bDnfUpgrade")  "
 
+  flatPak="FlatPak: $(yesNoValue "$bFlatPak")"
+  #Set output to empty before re-building it
+  OUTPUT=""
 
-flatPak="FlatPak: $(yesNoValue "$bFlatPak")"
-#Set output to empty before re-building it
-OUTPUT=""
+  clear
+  updateInstallListString
 
+  echo -e "################################################################################"
 
-clear
-updateInstallListString
-
-echo -e "################################################################################"
-
-# Root check
-if [ "$USER" != "root" ]; then
+  # Root check
+  if [ "$USER" != "root" ]; then
     echo -e "${RED}This script might need to be run as root to install packages${NC}"
-fi
+  fi
 
-# Put in values of update/upgrades to reflect toggleable values
-if [ "$bAptExists" = "true" ]; then
-  # APT
-  OUTPUT="${OUTPUT}(1) $aptUpdate \t (2) $aptUpgrade \n"
-elif [ "$bDnfExists" = "true" ]; then
-  # DNF
-  OUTPUT="${OUTPUT}(1) $dnfUpdate \t (2) $dnfUpgrade \n"
-fi
-OUTPUT="${OUTPUT}(3) $flatPak \t (4) Show lists \n"
+  # Put in values of update/upgrades to reflect toggleable values
+  if [ "$bAptExists" = "true" ]; then
+    # APT
+    OUTPUT="${OUTPUT}(1) $aptUpdate \t (2) $aptUpgrade \n"
+  elif [ "$bDnfExists" = "true" ]; then
+    # DNF
+    OUTPUT="${OUTPUT}(1) $dnfUpdate \t (2) $dnfUpgrade \n"
+  fi
+  OUTPUT="${OUTPUT}(3) $flatPak \t (4) Show lists \n"
 
+  # Last Rows
+  OUTPUT="${OUTPUT}(r) Run installer \t (a) Automatic yes to prompts: $(yesNoValue "$bAutoYesPrompts")\n"
+  OUTPUT="${OUTPUT}\t (d) Download files only: $(yesNoValue "$bDownloadFilesOnly")\n"
+  OUTPUT="${OUTPUT}(e) Lists to install:\t $selectedListsToInstall \n"
+  OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
 
+  # Print the menu and format the columns a bit nicer to view
+  echo -e $OUTPUT | column -ts $'\t' -o "  "
+  echo -e "################################################################################"
 
-# Last Rows
-OUTPUT="${OUTPUT}(r) Run installer \t (a) Automatic yes to prompts: $(yesNoValue "$bAutoYesPrompts")\n"
-OUTPUT="${OUTPUT}\t (d) Download files only: $(yesNoValue "$bDownloadFilesOnly")\n"
-OUTPUT="${OUTPUT}(e) Lists to install:\t $selectedListsToInstall \n"
-OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
+  # Read input for options, p to reprint the menu as default value
+  read -p "Enter value [p]: " readValue
+  readValue=${readValue:-p}
 
-
-# Print the menu and format the columns a bit nicer to view
-echo -e $OUTPUT | column -ts $'\t' -o "  "
-echo -e "################################################################################"
-
-# Read input for options, p to reprint the menu as default value
-read   -p "Enter value [p]: " readValue
-readValue=${readValue:-p}
-
-# When user has entered something, do something here
-case $readValue in
-  "q")
+  # When user has entered something, do something here
+  case $readValue in
+  "q") # Exit script
     exit 0
     ;;
 
-  "p")
+  "p") # Print MainMenu
     mainMenu
     ;;
 
-  "1")
+  "1") # Toggle to run repository updates before installing
     if [ "$bAptExists" = "true" ]; then
       # APT
       bAptUpdate=$([ "$bAptUpdate" = true ] && echo false || echo true)
@@ -106,79 +95,76 @@ case $readValue in
       # DNF
       bDnfUpdate=$([ "$bDnfUpdate" = true ] && echo false || echo true)
     fi
-  mainMenu
-  ;;
+    mainMenu
+    ;;
 
-  "2")
- # bAptUpgrade=$([ "$bAptUpgrade" = true ] && echo false || echo true)
-     if [ "$bAptExists" = "true" ]; then
+  "2") # Toggle to run system upgrade before install
+    # bAptUpgrade=$([ "$bAptUpgrade" = true ] && echo false || echo true)
+    if [ "$bAptExists" = "true" ]; then
       # APT
       bAptUpgrade=$([ "$bAptUpgrade" = true ] && echo false || echo true)
     elif [ "$bDnfExists" = "true" ]; then
       # DNF
       bDnfUpgrade=$([ "$bDnfUpgrade" = true ] && echo false || echo true)
     fi
-  mainMenu
-  ;;
+    mainMenu
+    ;;
 
-  "3")
-  bFlatPak=$([ "$bFlatPak" = true ] && echo false || echo true)
-  mainMenu
-  ;;
+  "3") # Toggle to install flatpak, and enable flatpak lists
+    bFlatPak=$([ "$bFlatPak" = true ] && echo false || echo true)
+    mainMenu
+    ;;
 
   "4")
-  defaultListMenu
-  ;;
+    defaultListMenu
+    ;;
 
   "a") # Answer yes to all prompts
-  bAutoYesPrompts=$([ "$bAutoYesPrompts" = true ] && echo false || echo true)
-  mainMenu
-  ;;
+    bAutoYesPrompts=$([ "$bAutoYesPrompts" = true ] && echo false || echo true)
+    mainMenu
+    ;;
 
   "d") # Only download the files without installing
-  bDownloadFilesOnly=$([ "$bDownloadFilesOnly" = true ] && echo false || echo true)
-  mainMenu
-  ;;
+    bDownloadFilesOnly=$([ "$bDownloadFilesOnly" = true ] && echo false || echo true)
+    mainMenu
+    ;;
 
   "e") # Change what lists to be installed
-  changeInstallLists
-  ;;
-
+    changeInstallLists
+    ;;
 
   *) # If no other value matches
     mainMenu
     ;;
-esac
-
+  esac
 
 }
 
-
 changeInstallLists() {
-OUTPUT=""
-clear
+  OUTPUT=""
+  clear
 
-echo -e "################################################################################"
-OUTPUT="${OUTPUT}(1) Server list \t $(yesNoValue "$bDefaultServer") \n"
-OUTPUT="${OUTPUT}(2) Desktop list \t $(yesNoValue "$bDefaultDesktop") \n"
-OUTPUT="${OUTPUT}(3) Flatpak list (Server) \t $(yesNoValue "$bDefaultFlatpakServer") \n"
-OUTPUT="${OUTPUT}(4) Flatpak list (Desktop) \t $(yesNoValue "$bDefaultFlatpakDesktop") \n"
-OUTPUT="${OUTPUT}(d) Display lists content \t  \n"
+  echo -e "################################################################################"
+  OUTPUT="${OUTPUT}(1) Server list \t $(yesNoValue "$bDefaultServer") \n"
+  OUTPUT="${OUTPUT}(2) Desktop list \t $(yesNoValue "$bDefaultDesktop") \n"
+  OUTPUT="${OUTPUT}(3) Flatpak list (Server) \t $(yesNoValue "$bDefaultFlatpakServer") \n"
+  OUTPUT="${OUTPUT}(4) Flatpak list (Desktop) \t $(yesNoValue "$bDefaultFlatpakDesktop") \n"
+  OUTPUT="${OUTPUT}(d) Display lists content \t  \n"
 
-# Last Rows
-OUTPUT="${OUTPUT}(m) Main menu \t\n"
-OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
+  # Last Rows
+  OUTPUT="${OUTPUT}(m) Main menu \t\n"
+  OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
 
-# Print the menu and format the columns a bit nicer to view
-echo -e $OUTPUT | column -ts $'\t' -o "  "
-echo -e "################################################################################"
+  # Print the menu and format the columns a bit nicer to view
+  echo -e $OUTPUT | column -ts $'\t' -o "  "
+  echo -e "################################################################################"
 
-# Read input for options, p to reprint the menu as default value
-read   -p "Enter value [p]: " readValue
-readValue=${readValue:-p}
+  # Read input for options, p to reprint the menu as default value
+  read -p "Enter value [p]: " readValue
+  readValue=${readValue:-p}
 
-# When the user has entered something, do something here
-case $readValue in
+  # When the user has entered something, do something here
+  case $readValue in
   "q")
     exit 0
     ;;
@@ -188,69 +174,69 @@ case $readValue in
     ;;
 
   "1")
-  bDefaultServer=$([ "$bDefaultServer" = true ] && echo false || echo true)
-  changeInstallLists
-  ;;
+    bDefaultServer=$([ "$bDefaultServer" = true ] && echo false || echo true)
+    changeInstallLists
+    ;;
 
   "2")
-  bDefaultDesktop=$([ "$bDefaultDesktop" = true ] && echo false || echo true)
-  changeInstallLists
-  ;;
+    bDefaultDesktop=$([ "$bDefaultDesktop" = true ] && echo false || echo true)
+    changeInstallLists
+    ;;
 
   "3")
-  bDefaultFlatpakServer=$([ "$bDefaultFlatpakServer" = true ] && echo false || echo true)
-  changeInstallLists
-  ;;
+    bDefaultFlatpakServer=$([ "$bDefaultFlatpakServer" = true ] && echo false || echo true)
+    changeInstallLists
+    ;;
 
   "4")
-  bDefaultFlatpakDesktop=$([ "$bDefaultFlatpakDesktop" = true ] && echo false || echo true)
-  changeInstallLists
-  ;;
+    bDefaultFlatpakDesktop=$([ "$bDefaultFlatpakDesktop" = true ] && echo false || echo true)
+    changeInstallLists
+    ;;
 
   "d")
-  displayListContent
-  changeInstallLists
-  ;;
+    displayListContent
+    changeInstallLists
+    ;;
 
   "m")
-  updateInstallListString
-  mainMenu
-  ;;
+    updateInstallListString
+    mainMenu
+    ;;
 
   *) # If no other value matches
     changeInstallLists
     ;;
-esac
+  esac
 }
 
 # Function to displays and enables changing the default lists
 defaultListMenu() {
-#Set output to empty before re-building it
-OUTPUT=""
-clear
+  #Set output to empty before re-building it
+  OUTPUT=""
+  clear
 
-echo -e "################################################################################"
-# Put in values of update/upgrades to reflect toggleable values
-OUTPUT="${OUTPUT}(1) Server list \t $defaultServer \n"
-OUTPUT="${OUTPUT}(2) Desktop list \t $defaultDesktop \n"
-OUTPUT="${OUTPUT}(3) Flatpak list (Server) \t $defaultFlatpakDesktop \n"
-OUTPUT="${OUTPUT}(4) Flatpak list (Desktop) \t $defaultFlatpakServer \n"
-OUTPUT="${OUTPUT}(d) Display lists content \t  \n"
+  echo -e "################################################################################"
+  # Put in values of update/upgrades to reflect toggleable values
+  OUTPUT="${OUTPUT}(1) Server list \t $defaultServer \n"
+  OUTPUT="${OUTPUT}(2) Desktop list \t $defaultDesktop \n"
+  OUTPUT="${OUTPUT}(3) Flatpak list (Server) \t $defaultFlatpakDesktop \n"
+  OUTPUT="${OUTPUT}(4) Flatpak list (Desktop) \t $defaultFlatpakServer \n"
+  OUTPUT="${OUTPUT}(d) Display lists content \t  \n"
 
-# Last Rows
-OUTPUT="${OUTPUT}(m) Main menu \t\n"
-OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
+  # Last Rows
+  OUTPUT="${OUTPUT}(m) Main menu \t\n"
+  OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
 
-# Print the menu and format the columns a bit nicer to view
-echo -e $OUTPUT | column -ts $'\t' -o "  "
-echo -e "################################################################################"
+  # Print the menu and format the columns a bit nicer to view
+  echo -e $OUTPUT | column -ts $'\t' -o "  "
+  echo -e "################################################################################"
 
-# Read input for options, p to reprint the menu as default value
-read   -p "Enter value [p]: " readValue
-readValue=${readValue:-p}
+  # Read input for options, p to reprint the menu as default value
+  read -p "Enter value [p]: " readValue
+  readValue=${readValue:-p}
 
-# When user has entered something, do something here
-case $readValue in
+  # When user has entered something, do something here
+  case $readValue in
   "q")
     exit 0
     ;;
@@ -260,37 +246,37 @@ case $readValue in
     ;;
 
   "1")
-  #bAptUpdate=$([ "$bAptUpdate" = true ] && echo false || echo true)
-  defaultListMenu
-  ;;
+    #bAptUpdate=$([ "$bAptUpdate" = true ] && echo false || echo true)
+    defaultListMenu
+    ;;
 
   "2")
-  #bAptUpgrade=$([ "$bAptUpgrade" = true ] && echo false || echo true)
-  defaultListMenu
-  ;;
+    #bAptUpgrade=$([ "$bAptUpgrade" = true ] && echo false || echo true)
+    defaultListMenu
+    ;;
 
   "3")
-  #bFlatPak=$([ "$bFlatPak" = true ] && echo false || echo true)
-  defaultListMenu
-  ;;
+    #bFlatPak=$([ "$bFlatPak" = true ] && echo false || echo true)
+    defaultListMenu
+    ;;
 
   "4")
-  defaultListMenu
-  ;;
+    defaultListMenu
+    ;;
 
   "d")
-  displayListContent
-  defaultListMenu
-  ;;
+    displayListContent
+    defaultListMenu
+    ;;
 
   "m")
-  mainMenu
-  ;;
+    mainMenu
+    ;;
 
   *) # If no other value matches
     defaultListMenu
     ;;
-esac
+  esac
 }
 
 # Fetches the lists and displays them for the user
@@ -302,119 +288,116 @@ displayListContent() {
   contentdefaultFlatpakDesktop=$(wget $defaultFlatpakDesktop -q -O -)
   contentdefaultFlatpakServer=$(wget $defaultFlatpakServer -q -O -)
 
-echo -e "#############################\n"
-echo "Candidates for Server:"
-echo $contentdefaultServer
-echo -e "#############################\n"
-echo "Candidates for Desktop:"
-echo $contentdefaultDesktop
-echo -e "#############################\n"
-echo "Candidates for Flatpak Server:"
-echo $contentdefaultFlatpakServer
-echo -e "#############################\n"
-echo "Candidates for Flatpak Desktop:"
-echo -e $contentdefaultFlatpakDesktop
-echo "#############################"
+  echo -e "#############################\n"
+  echo "Candidates for Server:"
+  echo $contentdefaultServer
+  echo -e "#############################\n"
+  echo "Candidates for Desktop:"
+  echo $contentdefaultDesktop
+  echo -e "#############################\n"
+  echo "Candidates for Flatpak Server:"
+  echo $contentdefaultFlatpakServer
+  echo -e "#############################\n"
+  echo "Candidates for Flatpak Desktop:"
+  echo -e $contentdefaultFlatpakDesktop
+  echo "#############################"
 
-# Script continues after user presses Enter
-pause_for_user
+  # Script continues after user presses Enter
+  pause_for_user
 
 }
 
 # Pauses script execution until user presses Enter
 # Optional prompt message can be provided as argument
 pause_for_user() {
-    read -n 1 -s -r -p "Press any key to continue"
+  read -n 1 -s -r -p "Press any key to continue"
 }
 
 # Function that converts truthy/falsy values to "yes" or "no"
 # Usage: yesNoValue <input>
 # Returns "yes" if input is 1 or true, "no" if input is 0 or false
 yesNoValue() {
-    local input=$1
+  local input=$1
 
-    # Convert a string to lowercase
-    to_lowercase() {
-        local input="$1"
-        echo "$input" | tr '[:upper:]' '[:lower:]'
-    }
+  # Convert a string to lowercase
+  to_lowercase() {
+    local input="$1"
+    echo "$input" | tr '[:upper:]' '[:lower:]'
+  }
 
-    input_lower=$(to_lowercase "$input")
+  input_lower=$(to_lowercase "$input")
 
-    if [ "$input_lower" = "1" ] || [ "$input_lower" = "true" ]; then
-        echo "Yes"
-    elif [ "$input_lower" = "0" ] || [ "$input_lower" = "false" ]; then
-        echo "No"
-    else
-        # Optional: handle invalid input - you can change this behavior
-        echo "invalid input"
-    fi
+  if [ "$input_lower" = "1" ] || [ "$input_lower" = "true" ]; then
+    echo "Yes"
+  elif [ "$input_lower" = "0" ] || [ "$input_lower" = "false" ]; then
+    echo "No"
+  else
+    # Optional: handle invalid input - you can change this behavior
+    echo "invalid input"
+  fi
 }
 
 updateInstallListString() {
-selectedListsToInstall=""
+  selectedListsToInstall=""
   local bFirst=true
 
-
-    # Server
-    if [ "$bDefaultServer" = "true" ]; then
-      if [ "$bFirst" = "true" ]; then
-        selectedListsToInstall="Server"
-        bFirst=false
-     else
-        selectedListsToInstall="$selectedListsToInstall, Server"
-      fi
+  # Server
+  if [ "$bDefaultServer" = "true" ]; then
+    if [ "$bFirst" = "true" ]; then
+      selectedListsToInstall="Server"
+      bFirst=false
+    else
+      selectedListsToInstall="$selectedListsToInstall, Server"
     fi
+  fi
 
   # Desktop
-    if [ "$bDefaultDesktop" = "true" ]; then
-      if [ "$bFirst" = "true" ]; then
-        selectedListsToInstall="Desktop"
-        bFirst=false
-     else
-        selectedListsToInstall="$selectedListsToInstall, Desktop"
-      fi
+  if [ "$bDefaultDesktop" = "true" ]; then
+    if [ "$bFirst" = "true" ]; then
+      selectedListsToInstall="Desktop"
+      bFirst=false
+    else
+      selectedListsToInstall="$selectedListsToInstall, Desktop"
     fi
+  fi
 
   # Server, Flatpak
-    if [ "$bDefaultFlatpakServer" = "true" ]; then
-      if [ "$bFirst" = "true" ]; then
-        selectedListsToInstall="Server Flatpak"
-        bFirst=false
-     else
-        selectedListsToInstall="$selectedListsToInstall, Server Flatpak"
-      fi
+  if [ "$bDefaultFlatpakServer" = "true" ] && [ "$bFlatPak" = "true" ]; then
+    if [ "$bFirst" = "true" ]; then
+      selectedListsToInstall="Server Flatpak"
+      bFirst=false
+    else
+      selectedListsToInstall="$selectedListsToInstall, Server Flatpak"
     fi
+  fi
 
   # Desktop, Flatpak
-    if [ "$bDefaultFlatpakDesktop" = "true" ]; then
-      if [ "$bFirst" = "true" ]; then
-        selectedListsToInstall="Desktop Flatpak"
-        bFirst=false
-     else
-        selectedListsToInstall="$selectedListsToInstall, Desktop Flatpak"
-      fi
+  if [ "$bDefaultFlatpakDesktop" = "true" ] && [ "$bFlatPak" = "true" ]; then
+    if [ "$bFirst" = "true" ]; then
+      selectedListsToInstall="Desktop Flatpak"
+      bFirst=false
+    else
+      selectedListsToInstall="$selectedListsToInstall, Desktop Flatpak"
     fi
+  fi
 
-if [ "$selectedListsToInstall" = "" ]; then
+  if [ "$selectedListsToInstall" = "" ]; then
     selectedListsToInstall="(none)"
-fi
-
+  fi
 }
 
 checkDNForAPT() {
-if ! [ -x "$(command -v apt-get)" ]; then
-  bAptExists=false
-else
-  bAptExists=true
-fi
+  if ! [ -x "$(command -v apt-get)" ]; then
+    bAptExists=false
+  else
+    bAptExists=true
+  fi
 
-if ! [ -x "$(command -v dnf)" ]; then
-  bDnfExists=false
-else
-  bDnfExists=true
-fi
-
+  if ! [ -x "$(command -v dnf)" ]; then
+    bDnfExists=false
+  else
+    bDnfExists=true
+  fi
 }
 
 # Check if DNF or APT exists on the system
