@@ -3,4 +3,6 @@ curl
 wget
 keepassxc
 nextcloud-desktop
+dnf
+exa
 

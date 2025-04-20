@@ -1,3 +1,5 @@
 links2
 curl
 wget
+dnf
+exa
