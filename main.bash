@@ -1,4 +1,5 @@
 #!/bin/bash -i
+# bashsupport disable=BP2001
 
 # Colours
 
@@ -41,6 +42,9 @@ bDefaultServer=false
 bDefaultFlatpakDesktop=false
 bDefaultFlatpakServer=false
 
+specialInstall="(none)"
+bSpecialBrave=false
+
 # Main menu of the installer
 # Enables user to make changes before running installer
 mainMenu() {
@@ -77,6 +81,7 @@ mainMenu() {
   # Last Rows
   OUTPUT="${OUTPUT}(r) Run installer \t (a) Automatic yes to prompts: $(yesNoValue "$bAutoYesPrompts")\n"
   OUTPUT="${OUTPUT}\t (d) Download files only: $(yesNoValue "$bDownloadFilesOnly")\n"
+  OUTPUT="${OUTPUT}(s) Special installs:\t $specialInstall\n"
   OUTPUT="${OUTPUT}(e) Lists to install:\t $selectedListsToInstall \n"
   OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
 
@@ -138,6 +143,10 @@ mainMenu() {
   "d") # Only download the files without installing
     bDownloadFilesOnly=$([ "$bDownloadFilesOnly" = true ] && echo false || echo true)
     mainMenu
+    ;;
+
+  "s") # Special installs, like Brave browser
+    specialInstallMenu
     ;;
 
   "e") # Change what lists to be installed
@@ -226,6 +235,7 @@ defaultListMenu() {
   OUTPUT=""
   clear
 
+
   echo -e "################################################################################"
   # Put in values of update/upgrades to reflect toggleable values
   OUTPUT="${OUTPUT}(1) Server list \t $defaultServer \n"
@@ -293,6 +303,7 @@ defaultListMenu() {
 # Fetches the lists and displays them for the user
 displayListContent() {
   echo "Fetching lists.."
+
   #$defaultServer
   contentdefaultServer=$(wget $defaultServer -q -O -)
   contentdefaultDesktop=$(wget $defaultDesktop -q -O -)
@@ -313,9 +324,8 @@ displayListContent() {
   echo -e $contentdefaultFlatpakDesktop
   echo "#############################"
 
-  # Script continues after user presses Enter
+  # Script continues after the user presses Enter
   pause_for_user
-
 }
 
 # Pauses script execution until user presses Enter
@@ -349,6 +359,7 @@ yesNoValue() {
 }
 
 updateInstallListString() {
+
   selectedListsToInstall=""
   local bFirst=true
 
@@ -411,11 +422,77 @@ checkDNForAPT() {
   fi
 }
 
+specialInstallMenu() {
+  #bSpecialBrave
+  #Set output to empty before re-building it
+  OUTPUT=""
+  clear
+
+  echo -e "################################################################################"
+  # Put in values of update/upgrades to reflect toggleable values
+  OUTPUT="${OUTPUT}(1) Brave Browser \t $(yesNoValue "$bSpecialBrave") \n"
+
+  # Last Rows
+  OUTPUT="${OUTPUT}(m) Main menu \t\n"
+  OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
+
+  # Print the menu and format the columns a bit nicer to view
+  echo -e $OUTPUT | column -ts $'\t' -o "  "
+  echo -e "################################################################################"
+
+  # Read input for options, p to reprint the menu as default value
+  read -p "Enter value [p]: " readValue
+  readValue=${readValue:-p}
+
+  # When user has entered something, do something here
+  case $readValue in
+  "q")
+    exit 0
+    ;;
+
+  "p")
+    specialInstallMenu
+    ;;
+
+  "1")
+    bSpecialBrave=$([ "$bSpecialBrave" = true ] && echo false || echo true)
+    specialInstallMenu
+    ;;
+
+  "m")
+    updateSpecialInstallListString
+    mainMenu
+    ;;
+
+  *) # If no other value matches
+    specialInstallMenu
+    ;;
+  esac
+}
+
+updateSpecialInstallListString() {
+  specialInstall=""
+  local bFirst=true
+
+  # Server
+  if [ "$bSpecialBrave" = "true" ]; then
+    if [ "$bFirst" = "true" ]; then
+      specialInstall="${GREEN}Brave${NC}"
+      bFirst=false
+    else
+      specialInstall="$specialInstall, ${GREEN}Brave${NC}"
+    fi
+  fi
+
+}
+
 # Helpers
 available() { command -v "${1:?}" >/dev/null; }
 
 # Check if DNF or APT exists on the system
 checkDNForAPT
+
+updateInstallListString
 
 # Calls the mainMenu function to start off the script
 mainMenu
