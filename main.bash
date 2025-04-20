@@ -8,10 +8,17 @@ NC='\033[0m' # No Color
 # Default APT Values
 bAptUpdate=true
 bAptUpgrade=false
+bDnfUpdate=true
+bDnfUpgrade=false
 bFlatPak=false
 bAutoYesPrompts=false
 bDownloadFilesOnly=false
 selectedListsToInstall="Desktop, Server, Flatpak Desktop, Flatpak Server"
+
+bAptExists=false
+bDnfExists=false
+
+
 
 
 # Default package lists
@@ -33,10 +40,12 @@ bDefaultFlatpakServer=true
 # Enables user to make changes before running installer
 mainMenu() {
 
-
-
 aptUpdate="APT Update: $(yesNoValue "$bAptUpdate") "
 aptUpgrade="APT Upgrade: $(yesNoValue "$bAptUpgrade")  "
+dnfUpdate="DNF Update: $(yesNoValue "$bAptUpdate") "
+dnfUpgrade="DNF Upgrade: $(yesNoValue "$bAptUpgrade")  "
+
+
 flatPak="FlatPak: $(yesNoValue "$bFlatPak")"
 #Set output to empty before re-building it
 OUTPUT=""
@@ -53,7 +62,13 @@ if [ "$USER" != "root" ]; then
 fi
 
 # Put in values of update/upgrades to reflect toggleable values
-OUTPUT="${OUTPUT}(1) $aptUpdate \t (2) $aptUpgrade \n"
+if [ "$bAptExists" = "true" ]; then
+  # APT
+  OUTPUT="${OUTPUT}(1) $aptUpdate \t (2) $aptUpgrade \n"
+elif [ "$bDnfExists" = "true" ]; then
+  # DNF
+  OUTPUT="${OUTPUT}(1) $dnfUpdate \t (2) $dnfUpgrade \n"
+fi
 OUTPUT="${OUTPUT}(3) $flatPak \t (4) Show lists \n"
 
 
@@ -396,6 +411,26 @@ fi
 
 }
 
+checkDNForAPT() {
+if ! [ -x "$(command -v apt-get)" ]; then
+  bAptExists=false
+else
+  bAptExists=true
+fi
+
+if ! [ -x "$(command -v dnf)" ]; then
+  bDnfExists=false
+else
+  bDnfExists=true
+fi
+
+
+}
+
+
+
+# Check if DNF or APT exists on system
+checkDNForAPT
 
 # Calls the mainMenu function to start off the script
 mainMenu
