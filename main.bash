@@ -27,6 +27,9 @@ bAutoYesPrompts=false
 bDownloadFilesOnly=false
 selectedListsToInstall="Desktop, Server, Flatpak Desktop, Flatpak Server"
 
+# Brave browser installer script from https://brave.com/linux/
+cmdBrave="curl -fsS https://dl.brave.com/install.sh | sh"
+
 bAptExists=false
 bDnfExists=false
 
@@ -339,16 +342,9 @@ pause_for_user() {
 yesNoValue() {
   local input=$1
 
-  # Convert a string to lowercase
-  to_lowercase() {
-    echo "$input" | tr '[:upper:]' '[:lower:]'
-  }
-
-  input_lower=$(to_lowercase "$input")
-
-  if [ "$input_lower" = "1" ] || [ "$input_lower" = "true" ]; then
+  if [ "$input" = "1" ] || [ "$input" = "true" ]; then
     echo "Yes"
-  elif [ "$input_lower" = "0" ] || [ "$input_lower" = "false" ]; then
+  elif [ "$input" = "0" ] || [ "$input" = "false" ]; then
     echo "No"
   else
     # Optional: handle invalid input - you can change this behavior
