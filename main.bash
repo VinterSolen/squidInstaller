@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Colours
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+#echo -e "${RED}red text ${NC} normal color"
+
 # Default APT Values
 bAptUpdate=true
 bAptUpgrade=false
@@ -41,6 +46,12 @@ clear
 updateInstallListString
 
 echo -e "################################################################################"
+
+# Root check
+if [ "$USER" != "root" ]; then
+    echo -e "${RED}This script needs to be run as root to install packages${NC}"
+fi
+
 # Put in values of update/upgrades to reflect toggleable values
 OUTPUT="${OUTPUT}(1) $aptUpdate \t (2) $aptUpgrade \n"
 OUTPUT="${OUTPUT}(3) $flatPak \t (4) Show lists \n"
