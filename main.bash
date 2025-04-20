@@ -159,20 +159,15 @@ OUTPUT=""
 clear
 
 echo -e "################################################################################"
-
-
-
 OUTPUT="${OUTPUT}(1) Server list \t $(yesNoValue "$bDefaultServer") \n"
 OUTPUT="${OUTPUT}(2) Desktop list \t $(yesNoValue "$bDefaultDesktop") \n"
 OUTPUT="${OUTPUT}(3) Flatpak list (Server) \t $(yesNoValue "$bDefaultFlatpakServer") \n"
 OUTPUT="${OUTPUT}(4) Flatpak list (Desktop) \t $(yesNoValue "$bDefaultFlatpakDesktop") \n"
 OUTPUT="${OUTPUT}(d) Display lists content \t  \n"
 
-
 # Last Rows
 OUTPUT="${OUTPUT}(m) Main menu \t\n"
 OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
-
 
 # Print the menu and format the columns a bit nicer to view
 echo -e $OUTPUT | column -ts $'\t' -o "  "
@@ -182,8 +177,7 @@ echo -e "#######################################################################
 read   -p "Enter value [p]: " readValue
 readValue=${readValue:-p}
 
-
-# When user has entered something, do something here
+# When the user has entered something, do something here
 case $readValue in
   "q")
     exit 0
@@ -213,7 +207,6 @@ case $readValue in
   changeInstallLists
   ;;
 
-
   "d")
   displayListContent
   changeInstallLists
@@ -231,7 +224,6 @@ esac
 }
 
 # Function to displays and enables changing the default lists
-
 defaultListMenu() {
 #Set output to empty before re-building it
 OUTPUT=""
@@ -249,7 +241,6 @@ OUTPUT="${OUTPUT}(d) Display lists content \t  \n"
 OUTPUT="${OUTPUT}(m) Main menu \t\n"
 OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
 
-
 # Print the menu and format the columns a bit nicer to view
 echo -e $OUTPUT | column -ts $'\t' -o "  "
 echo -e "################################################################################"
@@ -257,7 +248,6 @@ echo -e "#######################################################################
 # Read input for options, p to reprint the menu as default value
 read   -p "Enter value [p]: " readValue
 readValue=${readValue:-p}
-
 
 # When user has entered something, do something here
 case $readValue in
@@ -301,7 +291,6 @@ case $readValue in
     defaultListMenu
     ;;
 esac
-
 }
 
 # Fetches the lists and displays them for the user
@@ -312,7 +301,6 @@ displayListContent() {
   contentdefaultDesktop=$(wget $defaultDesktop -q -O -)
   contentdefaultFlatpakDesktop=$(wget $defaultFlatpakDesktop -q -O -)
   contentdefaultFlatpakServer=$(wget $defaultFlatpakServer -q -O -)
-  #content=$(wget google.com -q -O -)
 
 echo -e "#############################\n"
 echo "Candidates for Server:"
@@ -328,13 +316,8 @@ echo "Candidates for Flatpak Desktop:"
 echo -e $contentdefaultFlatpakDesktop
 echo "#############################"
 
-
-
 # Script continues after user presses Enter
 pause_for_user
-
-
-
 
 }
 
@@ -343,7 +326,6 @@ pause_for_user
 pause_for_user() {
     read -n 1 -s -r -p "Press any key to continue"
 }
-
 
 # Function that converts truthy/falsy values to "yes" or "no"
 # Usage: yesNoValue <input>
@@ -369,10 +351,8 @@ yesNoValue() {
     fi
 }
 
-
 updateInstallListString() {
-
-  selectedListsToInstall=""
+selectedListsToInstall=""
   local bFirst=true
 
 
@@ -420,8 +400,6 @@ if [ "$selectedListsToInstall" = "" ]; then
     selectedListsToInstall="(none)"
 fi
 
-  #selectedListsToInstall="Desktop, Server, Flatpak Desktop, Flatpak Server"
-
 }
 
 checkDNForAPT() {
@@ -437,12 +415,9 @@ else
   bDnfExists=true
 fi
 
-
 }
 
-
-
-# Check if DNF or APT exists on system
+# Check if DNF or APT exists on the system
 checkDNForAPT
 
 # Calls the mainMenu function to start off the script
