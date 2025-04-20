@@ -1,3 +1,6 @@
 links2
 curl
 wget
+keepassxc
+nextcloud-desktop
+

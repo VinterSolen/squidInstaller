@@ -50,7 +50,7 @@ OUTPUT="${OUTPUT}(3) $flatPak \t (4) Show lists \n"
 # Last Rows
 OUTPUT="${OUTPUT}(r) Run installer \t (a) Automatic yes to prompts: $(yesNoValue "$bAutoYesPrompts")\n"
 OUTPUT="${OUTPUT}\t (d) Download files only: $(yesNoValue "$bDownloadFilesOnly")\n"
-OUTPUT="${OUTPUT}(e) Lists to install\t $selectedListsToInstall \n"
+OUTPUT="${OUTPUT}(e) Lists to install:\t $selectedListsToInstall \n"
 OUTPUT="${OUTPUT}(p) Print Menu \t (q) Exit \n"
 
 
@@ -377,6 +377,9 @@ updateInstallListString() {
       fi
     fi
 
+if [ "$selectedListsToInstall" = "" ]; then
+    selectedListsToInstall="(none)"
+fi
 
   #selectedListsToInstall="Desktop, Server, Flatpak Desktop, Flatpak Server"
 
