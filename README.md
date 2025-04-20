@@ -12,7 +12,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/VinterSolen/squidInstaller/re
 
 
 
-#Previews
+# Previews
 
 ## DNF
 ```
@@ -29,7 +29,7 @@ Enter value [p]:
 ```
 
 ## APT
-## DNF
+
 ```
 ################################################################################
 This script might need to be run as root to install packages
