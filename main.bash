@@ -207,7 +207,7 @@ defaultListMenu
 # Pauses script execution until user presses Enter
 # Optional prompt message can be provided as argument
 pause_for_user() {
-    read -pr "Press Enter to continue..."
+    read -n 1 -s -r -p "Press any key to continue"
 }
 
 
