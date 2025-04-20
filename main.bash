@@ -60,7 +60,7 @@ mainMenu() {
 
   clear
   updateInstallListString
-
+  updateSpecialInstallListString
   echo -e "################################################################################"
 
   # Root check
@@ -234,7 +234,6 @@ defaultListMenu() {
   #Set output to empty before re-building it
   OUTPUT=""
   clear
-
 
   echo -e "################################################################################"
   # Put in values of update/upgrades to reflect toggleable values
@@ -482,6 +481,8 @@ updateSpecialInstallListString() {
     else
       specialInstall="$specialInstall, ${GREEN}Brave${NC}"
     fi
+  else
+    specialInstall="(none)"
   fi
 
 }
@@ -493,6 +494,6 @@ available() { command -v "${1:?}" >/dev/null; }
 checkDNForAPT
 
 updateInstallListString
-
+updateSpecialInstallListString
 # Calls the mainMenu function to start off the script
 mainMenu
