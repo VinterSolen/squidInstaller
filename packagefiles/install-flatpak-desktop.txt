@@ -3,3 +3,11 @@ com.discordapp.Discord
 chat.revolt.RevoltDesktop
 com.viber.Viber
 com.rtosta.zapzap
+com.valvesoftware.Steam
+io.github.Foldex.AdwSteamGtk
+com.jgraph.drawio.desktop
+com.heroicgameslauncher.hgl
+org.onlyoffice.desktopeditors
+com.spotify.Client
+com.hamrick.VueScan
+com.github.iwalton3.jellyfin-media-player

@@ -5,4 +5,5 @@ keepassxc
 nextcloud-desktop
 dnf
 exa
+flatseal
 

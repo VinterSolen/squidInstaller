@@ -244,8 +244,8 @@ defaultListMenu() {
   # Put in values of update/upgrades to reflect toggleable values
   OUTPUT="${OUTPUT}(1) Server list \t $defaultServer \n"
   OUTPUT="${OUTPUT}(2) Desktop list \t $defaultDesktop \n"
-  OUTPUT="${OUTPUT}(3) Flatpak list (Server) \t $defaultFlatpakDesktop \n"
-  OUTPUT="${OUTPUT}(4) Flatpak list (Desktop) \t $defaultFlatpakServer \n"
+  OUTPUT="${OUTPUT}(3) Flatpak list (Server) \t $defaultFlatpakServer \n"
+  OUTPUT="${OUTPUT}(4) Flatpak list (Desktop) \t $defaultFlatpakDesktop \n"
   OUTPUT="${OUTPUT}(d) Display lists content \t  \n"
 
   # Last Rows
